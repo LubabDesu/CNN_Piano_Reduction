@@ -1,6 +1,8 @@
 import pretty_midi 
 import os
 import numpy as np
+import torch
+from torch.utils.data import Dataset
 # print(os.path.dirname(pretty_midi.__file__))
 
 
@@ -84,13 +86,26 @@ def load_midi_file(filepath,fs=16) :
         return np.stack(piano_rolls, axis=0)
 
 
+class PianoReductionDataset(Dataset):
+    def __init__(self, input_files, target_files):
+        self.inputs = [load_midi_file(f) for f in input_files]  # List of [4, 88, 64]
+        self.targets = [load_midi_file(f) for f in target_files]  # List of [1, 88, 64]
+        assert len(self.inputs) == len(self.targets), "Input and target file counts must match"
+
+    def __len__(self):
+        return len(self.inputs)
+
+    def __getitem__(self, idx):
+        input_tensor = torch.FloatTensor(self.inputs[idx]).permute(1, 2, 0)  # [88, 64, 4]
+        # print(f"Input shape: {input_tensor.shape}")
+        target_tensor = torch.FloatTensor(self.targets[idx]).permute(1, 2, 0)  # [88, 64, 1]
+        return input_tensor, target_tensor
 
 
 
-
-orchesetral_roll = load_midi_file('CNN_Piano_Reduction/aligned_dataset/output_aligned_files/0/Brahms_Symph4_iv(1-33)_ORCH+REDUC+piano_orch.mid')
-print(f"Piano roll shape : {orchesetral_roll.shape}")
-print(orchesetral_roll[:, :50, :50])  # Print first 5 pitch rows and first 5 time steps
+# orchesetral_roll = load_midi_file('CNN_Piano_Reduction/aligned_dataset/output_aligned_files/0/Brahms_Symph4_iv(1-33)_ORCH+REDUC+piano_orch.mid')
+# print(f"Piano roll shape : {orchesetral_roll.shape}")
+# print(orchesetral_roll[:, :50, :50])  # Print first 5 pitch rows and first 5 time steps
 
 # midi_data = pretty_midi.PrettyMIDI('CNN_Piano_Reduction/aligned_dataset/output_aligned_files/0/Brahms_Symph4_iv(1-33)_ORCH+REDUC+piano_orch.mid')
 # for instrument in midi_data.instruments:
