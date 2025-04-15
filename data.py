@@ -35,6 +35,7 @@ def load_midi_file(filepath,fs=16) :
     # Process each category
     piano_rolls = []
     
+    #Collects the instrument notes for each category of instruments
     for category_name, name_keywords in categories.items():
         # Collect notes for this category
         category_notes = []
@@ -61,6 +62,7 @@ def load_midi_file(filepath,fs=16) :
             
             # Resample time steps to 64
             original_time_steps = piano_roll.shape[1]
+            # print("Original time steps : ", original_time_steps)
             if original_time_steps > 0:
                 # Bin the notes into 64 time steps
                 bin_size = max(1, original_time_steps // 64)  # Ensure at least 1
@@ -95,19 +97,5 @@ class PianoReductionDataset(Dataset):
         
         target_tensor = torch.FloatTensor(self.targets[idx]).permute(1, 2, 0)  # [88, 64, 1]
         # print(f"Target shape: {target_tensor.shape}")
-        return input_tensor, target_tensor
+        return {'input': input_tensor, 'target': target_tensor} 
 
-
-
-# orchesetral_roll = load_midi_file('CNN_Piano_Reduction/aligned_dataset/output_aligned_files/0/Brahms_Symph4_iv(1-33)_ORCH+REDUC+piano_orch.mid')
-# print(f"Piano roll shape : {orchesetral_roll.shape}")
-# print(orchesetral_roll[:, :50, :50])  # Print first 5 pitch rows and first 5 time steps
-
-# midi_data = pretty_midi.PrettyMIDI('CNN_Piano_Reduction/aligned_dataset/output_aligned_files/0/Brahms_Symph4_iv(1-33)_ORCH+REDUC+piano_orch.mid')
-# for instrument in midi_data.instruments:
-#     print(instrument.name, instrument.program)
-
-# all_notes = []
-# for instrument in midi_data.instruments:
-#     all_notes.extend([note.pitch for note in instrument.notes])
-# print(min(all_notes), max(all_notes))
