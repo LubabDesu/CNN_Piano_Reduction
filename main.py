@@ -20,7 +20,7 @@ input_dir = "/Users/lucasyan/Winter - Spring 25 research project/CNN_Piano_Reduc
 
 all_input_files = []
 all_target_files = []
-base_dir = "/Users/lucasyan/Winter - Spring 25 research project/CNN_Piano_Reduction/aligned_dataset/aligned"
+base_dir = "CNN_Piano_Reduction/aligned_dataset/aligned"
 found_orchestra = 0
 found_piano = 0
 paired_count = 0
@@ -104,7 +104,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 model.to(device)
 
-trained_model = train_model(model, train_loader, val_loader, num_epochs=30, device=device) # Pass device and val_loader
+trained_model = train_model(model, train_loader, val_loader, num_epochs=50, device=device) # Pass device and val_loader
 torch.save(model.state_dict(), "first-train-model.pth") # Save state_dict
 
 

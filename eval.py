@@ -14,12 +14,27 @@ model.eval()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
+#Check the total weights of the model
+total = 0
+for param in model.parameters():
+    total += torch.sum(param.data)
+print("Total weight sum:", total)
+
+
+
 # load test set (already loaded in main)
 
 #Eval loop
-with torch.no_grad :
+with torch.no_grad():
     for batch in test_loader :
         batch_inputs = batch['input'].to(device).permute(0, 3, 1, 2)
         batch_targets = batch['target'].to(device).permute(0, 3, 1, 2)
+
+        #Check after each conv
+        x = model.down_conv1(batch_inputs)
+        print("After conv1:", torch.sum(x))
+        print("sum of inputs : " + str(torch.sum(batch_inputs)))
         outputs = model(batch_inputs)
         print(outputs)
+        print(outputs.shape)
+        print("sum of outputs now" + str(torch.sum(outputs)))
