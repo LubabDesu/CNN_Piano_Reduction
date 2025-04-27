@@ -109,7 +109,7 @@ def load_midi_file(filepath,fs=16) :
 
         if category_notes:  # Only process if there are notes
             has_notes = True
-            print(f"--- Processing TARGET file: {filepath} AND IT HAS NOTES!! ---")
+            # print(f"--- Processing TARGET file: {filepath} AND IT HAS NOTES!! ---")
             new_instrument = pretty_midi.Instrument(program=0)
             new_instrument.notes = category_notes
             new_midi.instruments.append(new_instrument)
@@ -124,7 +124,7 @@ def load_midi_file(filepath,fs=16) :
             # Resample time steps to 64
 
             #print("Original piano roll shape:", piano_roll.shape)
-            print("Sum of piano roll before resampling:", piano_roll.sum())
+            # print("Sum of piano roll before resampling:", piano_roll.sum())
             original_time_steps = piano_roll.shape[1]
             # print("Original time steps : ", original_time_steps)
             if original_time_steps > 0:
@@ -147,7 +147,7 @@ def load_midi_file(filepath,fs=16) :
     if (has_notes == False) :
         print(f"--- Processing TARGET file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
     stacked_rolls = np.stack(piano_rolls, axis=0)
-    print("Sum of ALL elements in the FINAL stacked array:", stacked_rolls.sum()) # Check total non-zero elements
+    #print("Sum of ALL elements in the FINAL stacked array:", stacked_rolls.sum()) # Check total non-zero elements
     return stacked_rolls, total_duration_in_seconds
 
 
