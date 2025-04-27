@@ -4,6 +4,7 @@ from models import PianoReductionCNN
 from main import test_dataset, test_loader
 from data import PianoReductionDataset
 from torch.utils.data import DataLoader
+from collections import defaultdict
 
 #Helper function to binarize outputs
 def binarize(output_list) :
@@ -106,15 +107,12 @@ false_positives = 0 # In generated set, but not in groundtruth
 false_negatives = 0 # in ground truth, but not in generated
 
 # Make a dictionary of the ground truth set, sorted by pitch
-groundtruth_dict = {}
-for pair in groundtruth_set :
-    pitch = pair[0]
-    onset_time = pair[1]
-
+groundtruth_dict = defaultdict(list)
+for pitch, onset_time in groundtruth_set :
     groundtruth_dict[pitch].append(onset_time)
 
 for pitch in groundtruth_dict : 
-    groundtruth_dict[pitch] = sorted(groundtruth_dict[pitch])
+    groundtruth_dict[pitch].sort()
 
 for pair in generated_set :
     gen_pitch = pair[0]
@@ -144,9 +142,23 @@ for pitch in groundtruth_dict :
     false_negatives += length_of_list
 
 # Calculate each metric 
-precision = true_positives / (true_positives + false_positives)
-recall = true_positives / (true_positives + false_negatives)
-f1_score = 2 * precision * recall / (precision + recall)
-print(f"The precision score is {precision}, and the recall score is {recall}, " + 
-      "giving us an f1 score of {f1_score}")
+precision = 0.0
+recall = 0.0
+f1_score = 0.0
+
+tp_fp = true_positives + false_positives
+tp_fn = true_positives + false_negatives
+
+if tp_fp > 0:
+    precision = true_positives / tp_fp
+if tp_fn > 0:
+    recall = true_positives / tp_fn
+if (precision + recall) > 0:
+    f1_score = 2 * precision * recall / (precision + recall)
+
+print(f"True Positives: {true_positives}")
+print(f"False Positives: {false_positives}")
+print(f"False Negatives: {false_negatives}")
+print(f"The precision score is {precision:.4f}, and the recall score is {recall:.4f}, " +
+      f"giving us an f1 score of {f1_score:.4f}")
     
