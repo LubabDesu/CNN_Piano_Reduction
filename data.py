@@ -15,8 +15,11 @@ def load_piano_midi_file(filepath,fs=16) :
     
     Returns : 
     - A numpy array with shape (128, T), where T signifies the number of time steps taken
+    - Total duration of the file processed in seconds
     """
     midi_data = pretty_midi.PrettyMIDI(filepath)
+    # Get total duration to calculate the hop_size in seconds for each column of the piano roll
+    total_duration_in_seconds = midi_data.get_end_time()
     piano_notes = []
     for instrument in midi_data.instruments :
         if not instrument.is_drum :
@@ -44,7 +47,7 @@ def load_piano_midi_file(filepath,fs=16) :
         original_time_steps = piano_roll.shape[1]
             # print("Original time steps : ", original_time_steps)
         if original_time_steps > 0:
-                # Bin the notes into 64 time steps
+            # Bin the notes into 64 time steps
             bin_size = max(1, original_time_steps // 64)  # Ensure at least 1
             resampled_roll = np.zeros((88, 64))
             for i in range(64):
@@ -55,7 +58,7 @@ def load_piano_midi_file(filepath,fs=16) :
         else : 
             resampled_roll = np.zeros((88, 64))
         # Add channel dimension: [1, 88, 64]
-        return np.expand_dims(resampled_roll, axis=0)
+        return np.expand_dims(resampled_roll, axis=0), total_duration_in_seconds
 
 def load_midi_file(filepath,fs=16) :
     """ 
@@ -67,8 +70,12 @@ def load_midi_file(filepath,fs=16) :
     
     Returns : 
     - A numpy array with shape (128, T), where T signifies the number of time steps taken
+    - Total duration of the file processed in seconds
     """
     midi_data = pretty_midi.PrettyMIDI(filepath)
+
+    # Get total duration to calculate the hop_size in seconds for each column of the piano roll
+    total_duration_in_seconds = midi_data.get_end_time()
 
     categories = {
         'brass': ['trumpet', 'horn', 'trombone', 'tuba', 'trb'],  # Brass instruments
@@ -141,15 +148,26 @@ def load_midi_file(filepath,fs=16) :
         print(f"--- Processing TARGET file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
     stacked_rolls = np.stack(piano_rolls, axis=0)
     print("Sum of ALL elements in the FINAL stacked array:", stacked_rolls.sum()) # Check total non-zero elements
-    return stacked_rolls
+    return stacked_rolls, total_duration_in_seconds
 
 
 class PianoReductionDataset(Dataset):
     def __init__(self, input_files, target_files):
-        self.inputs = [load_midi_file(f) for f in input_files]  # List of [4, 88, 64]
-        self.targets = [load_piano_midi_file(f) for f in target_files]  # List of [1, 88, 64]
-        #print("Test input files:", input_files)
-        #print("Test target files:", target_files)
+        self.inputs = []
+        self.inputs_durations = []
+        self.targets = []
+        self.targets_durations = []
+
+        for f in input_files : 
+            piano_roll, duration = load_midi_file(f)
+            self.inputs.append(piano_roll) # List of [4, 88, 64]
+            self.inputs_durations.append(duration)
+        
+        for file in target_files :
+            piano_roll, duration = load_piano_midi_file(file)
+            self.targets.append(piano_roll) # List of [1, 88, 64]
+            self.targets_durations.append(duration)
+
         assert len(self.inputs) == len(self.targets), "Input and target file counts must match"
 
     def __len__(self):
@@ -161,5 +179,11 @@ class PianoReductionDataset(Dataset):
         
         target_tensor = torch.FloatTensor(self.targets[idx]).permute(1, 2, 0)  # [88, 64, 1]
         # print(f"Target shape: {target_tensor.shape}")
-        return {'input': input_tensor, 'target': target_tensor} 
+
+        input_duration = self.inputs_durations[idx]
+        target_duration = self.targets_durations[idx]
+        return {'input': input_tensor, 
+                'target': target_tensor, 
+                'input_duration' :input_duration, 
+                'target_duration' : target_duration} 
 
