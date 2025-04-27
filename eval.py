@@ -85,8 +85,8 @@ for idx in active_indices :
 # Process the groundtruth piano roll, put every note in a set which contains individual 
 # sets of (pitch, onset_time)
 groundtruth_set = set()
-print(f"Processing {len(active_groundtruth_indices)} ground truth notes...") # Add print for debugging
 active_groundtruth_indices = torch.nonzero(all_groundtruth_outputs)
+print(f"Processing {len(active_groundtruth_indices)} ground truth notes...") # Add print for debugging
 for idx in active_groundtruth_indices :
     sample_idx = idx[0]  # Get the index of the sample this note belongs to
     pitch_idx = idx[2]
@@ -94,7 +94,7 @@ for idx in active_groundtruth_indices :
 
     current_sample_duration = all_target_durations[sample_idx]
 
-    hop_time_in_seconds = target_total_duration_in_seconds / 64
+    hop_time_in_seconds = current_sample_duration / 64
     onset_time = onset_idx * hop_time_in_seconds
 
     groundtruth_set.add((int(pitch_idx), float(onset_time.item())))
