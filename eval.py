@@ -57,6 +57,18 @@ all_groundtruth_outputs = torch.cat(all_groundtruth_outputs, dim=0)
 all_generated_outputs = binarize(all_generated_outputs)
 all_groundtruth_outputs = binarize(all_groundtruth_outputs)
 
+
+
 active_indices = torch.nonzero(all_generated_outputs)
 
 print("active indices are : ", active_indices)
+
+generated_set = set()
+
+for idx in active_indices :
+    pitch_idx = idx[2]
+    onset_idx = idx[3]
+
+    onset_time = onset_idx * hop_time_in_seconds
+
+    generated_set.add(int(pitch_idx), onset_time)
