@@ -52,12 +52,8 @@ def load_piano_midi_file(filepath,fs=16) :
                 end_idx = min((i + 1) * bin_size, original_time_steps)
                 if start_idx < original_time_steps:
                     resampled_roll[:, i] = np.any(piano_roll[:, start_idx:end_idx], axis=1)
-                piano_roll.append(resampled_roll)
-            else:
-                piano_roll.append(np.zeros((88, 64)))  # Handle empty case
-        else:
-            piano_roll.append(np.zeros((88, 64)))  # Handle empty category
-
+        else : 
+            resampled_roll = np.zeros((88, 64))
         # Add channel dimension: [1, 88, 64]
         return np.expand_dims(resampled_roll, axis=0)
 
