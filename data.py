@@ -23,7 +23,7 @@ def load_piano_midi_file(filepath,fs=16) :
             piano_notes.extend(instrument.notes)
 
     if piano_notes :
-        temp_midi = pretty_midi.PrettyMIDI(piano_notes)
+        temp_midi = pretty_midi.PrettyMIDI()
         temp_instrument = pretty_midi.Instrument(program = 0)
         temp_instrument.notes = piano_notes
         temp_midi.instruments.append(temp_instrument)
