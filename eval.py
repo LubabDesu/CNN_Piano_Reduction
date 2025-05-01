@@ -5,6 +5,7 @@ from main import test_dataset, test_loader
 from data import PianoReductionDataset
 from torch.utils.data import DataLoader
 from collections import defaultdict
+from visualize import show_pianoroll
 
 #Helper function to binarize outputs
 def binarize(output_list) :
@@ -56,6 +57,8 @@ all_target_durations = torch.cat(all_target_durations, dim=0)
 #Binarize the outputs 
 all_generated_outputs = binarize(all_generated_outputs)
 all_groundtruth_outputs = binarize(all_groundtruth_outputs)
+
+
 
 
 
