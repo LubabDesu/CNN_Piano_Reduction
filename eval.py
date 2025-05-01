@@ -1,7 +1,7 @@
 import os 
 import torch
 from models import PianoReductionCNN
-from main import test_dataset, test_loader
+from main import  test_loader
 from data import PianoReductionDataset
 from torch.utils.data import DataLoader
 from collections import defaultdict

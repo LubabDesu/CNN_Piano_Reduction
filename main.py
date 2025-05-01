@@ -8,6 +8,9 @@ from models import PianoReductionCNN
 from data import PianoReductionDataset
 from training import train_model as run_training_loop # Import the actual training loop function
 
+
+
+
 # --- Function Definitions ---
 
 def find_file_pairs(base_dir):
@@ -61,6 +64,8 @@ def find_file_pairs(base_dir):
         print("Warning: No complete pairs ('orchestra.mid', 'piano.mid') found.")
 
     return all_input_files, all_target_files
+
+
 
 def split_data(all_input_files, all_target_files, val_ratio=0.15, test_ratio=0.15, random_state=42):
     """
@@ -225,3 +230,32 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+""" Making these global variables for convenient imports"""
+
+BASE_DATA_DIR = "CNN_Piano_Reduction/aligned_dataset/aligned" # Base directory containing piece subfolders
+VAL_RATIO = 0.15
+TRAIN_RATIO = 0.70 # Implicitly defined by 1 - VAL_RATIO - TEST_RATIO
+TEST_RATIO = 0.15
+RANDOM_STATE = 42 # For reproducible splits
+BATCH_SIZE = 64
+NUM_WORKERS = 0 # Set higher if you have multiple CPU cores and data loading is a bottleneck
+NUM_EPOCHS = 50
+MODEL_SAVE_PATH = "first-train-model.pth"
+
+# --- Pipeline ---
+
+# 1. Find data file pairs
+all_input_files, all_target_files = find_file_pairs(BASE_DATA_DIR)
+
+# 2. Split data into train, validation, test sets
+input_train, input_val, input_test, target_train, target_val, target_test = split_data(
+    all_input_files, all_target_files,
+    val_ratio=VAL_RATIO, test_ratio=TEST_RATIO, random_state=RANDOM_STATE
+)
+train_loader, val_loader, test_loader = create_dataloaders(
+    input_train, target_train, input_val, target_val, input_test, target_test,
+    batch_size=BATCH_SIZE, num_workers=NUM_WORKERS
+)

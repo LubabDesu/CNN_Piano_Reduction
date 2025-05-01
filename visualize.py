@@ -2,7 +2,7 @@
 import os 
 import torch
 from models import PianoReductionCNN
-from main import test_dataset, test_loader
+from main import test_loader
 import pypianoroll as ppr
 import matplotlib.pyplot as plt
 
