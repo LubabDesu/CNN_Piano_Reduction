@@ -123,8 +123,7 @@ def create_dataloaders(input_train, target_train, input_val, target_val, input_t
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     print(f"DataLoaders created with batch size: {batch_size}")
-    return train_loader, val_loader, test_loader
-
+    return train_loader, val_loader, test_loader, test_dataset
 
 def setup_and_train_model(train_loader, val_loader, num_epochs=50, model_save_path="first-train-model.pth"):
     """
@@ -255,7 +254,7 @@ input_train, input_val, input_test, target_train, target_val, target_test = spli
     all_input_files, all_target_files,
     val_ratio=VAL_RATIO, test_ratio=TEST_RATIO, random_state=RANDOM_STATE
 )
-train_loader, val_loader, test_loader = create_dataloaders(
+train_loader, val_loader, test_loader, test_dataset = create_dataloaders(
     input_train, target_train, input_val, target_val, input_test, target_test,
     batch_size=BATCH_SIZE, num_workers=NUM_WORKERS
 )

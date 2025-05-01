@@ -2,7 +2,7 @@
 import os 
 import torch
 from models import PianoReductionCNN
-from main import test_loader
+from main import test_loader, test_dataset
 import pypianoroll as ppr
 import matplotlib.pyplot as plt
 
@@ -18,23 +18,26 @@ def show_pianoroll(roll, title=None) :
     ax.set_xlabel('Time')
     ax.set_ylabel('MIDI Pitch')
 
-# Load model and set to evaluation mode
-model = PianoReductionCNN()
-model.load_state_dict(torch.load("first-train-model.pth"))
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = PianoReductionCNN().to(device)
+model.load_state_dict(torch.load("first-train-model.pth", map_location=device))
 model.eval()
 
-# move to GPU
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+idx = 5
+sample = test_dataset[idx]
+print(f"Visualizing {sample} now...")
+roll_input = sample['input']
+roll_target = sample['target']
 
-#Eval loop
+inp = roll_input.to(device).permute(0, 3, 1, 2)
+
+
 with torch.no_grad():
-    for batch in test_loader :
-        batch_inputs = batch['input'].to(device).permute(0, 3, 1, 2)
-        batch_targets = batch['target'].to(device).permute(0, 3, 1, 2)
-        batch_inputs_duration = batch['input_duration'].to(device)
-        batch_targets_duration = batch['target_duration'].to(device)
+    pred = model(inp)            
 
-        outputs = model(batch_inputs)
-        show_pianoroll(batch_inputs)
-        show_pianoroll(batch_targets)
+# pull out the 2D arrays for plotting
+gt_roll   = roll_target.cpu().numpy().T   # maybe (P, T) after transpose
+pred_roll = pred[0,0].cpu().numpy() 
+
+show_pianoroll(gt_roll)
+show_pianoroll(pred_roll)
