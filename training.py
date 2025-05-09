@@ -6,9 +6,9 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 
 
-def train_model(model, train_loader, val_loader, num_epochs = 50, device='cpu') :
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr = 0.0005)
+def train_model(model, train_loader, val_loader, num_epochs = 100, device='cpu') :
+    criterion = nn.BCEWithLogitsLoss(pos_weight=0.4)
+    optimizer = optim.Adam(model.parameters(), lr = 0.0.01)
     scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Current device being used is .... : " + str(device))

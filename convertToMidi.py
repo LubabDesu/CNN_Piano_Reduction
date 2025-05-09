@@ -76,7 +76,7 @@ def piano_roll_to_pretty_midi(piano_roll, fs=10, bpm=120, program=0, velocity=10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = PianoReductionCNN().to(device)
-model.load_state_dict(torch.load("first-train-model.pth", map_location=device))
+model.load_state_dict(torch.load("bce-loss-model.pth", map_location=device))
 model.eval()
 
 sample = next(iter(test_loader))

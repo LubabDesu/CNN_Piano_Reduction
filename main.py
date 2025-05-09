@@ -125,7 +125,7 @@ def create_dataloaders(input_train, target_train, input_val, target_val, input_t
     print(f"DataLoaders created with batch size: {batch_size}")
     return train_loader, val_loader, test_loader, test_dataset
 
-def setup_and_train_model(train_loader, val_loader, num_epochs=50, model_save_path="first-train-model.pth"):
+def setup_and_train_model(train_loader, val_loader, num_epochs=50, model_save_path="bce-loss-model.pth"):
     """
     Initializes the CNN model, determines the device, runs the training loop,
     and saves the trained model's state dictionary.
@@ -176,7 +176,7 @@ def main():
     BATCH_SIZE = 64
     NUM_WORKERS = 0 # Set higher if you have multiple CPU cores and data loading is a bottleneck
     NUM_EPOCHS = 50
-    MODEL_SAVE_PATH = "Cross_Entropy_Model_1"
+    MODEL_SAVE_PATH = "bce-loss-model.pth"
 
     # --- Pipeline ---
 
@@ -242,7 +242,7 @@ RANDOM_STATE = 42 # For reproducible splits
 BATCH_SIZE = 64
 NUM_WORKERS = 0 # Set higher if you have multiple CPU cores and data loading is a bottleneck
 NUM_EPOCHS = 50
-MODEL_SAVE_PATH = "first-train-model.pth"
+MODEL_SAVE_PATH = "bce-loss-model.pth"
 
 # --- Pipeline ---
 
