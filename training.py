@@ -7,7 +7,7 @@ from torch.optim.lr_scheduler import StepLR
 
 
 def train_model(model, train_loader, val_loader, num_epochs = 50, device='cpu') :
-    criterion = nn.MSELoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr = 0.0005)
     scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

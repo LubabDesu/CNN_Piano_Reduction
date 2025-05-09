@@ -111,7 +111,7 @@ def create_dataloaders(input_train, target_train, input_val, target_val, input_t
     """
     if not all([input_train, target_train, input_val, target_val, input_test, target_test]):
          print("Error: Cannot create DataLoaders - one or more input lists are missing.")
-         return None, None, None
+         return None, None, None, None
 
     train_dataset = PianoReductionDataset(input_files=input_train, target_files=target_train)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
@@ -176,7 +176,7 @@ def main():
     BATCH_SIZE = 64
     NUM_WORKERS = 0 # Set higher if you have multiple CPU cores and data loading is a bottleneck
     NUM_EPOCHS = 50
-    MODEL_SAVE_PATH = "first-train-model.pth"
+    MODEL_SAVE_PATH = "Cross_Entropy_Model_1"
 
     # --- Pipeline ---
 
@@ -205,7 +205,7 @@ def main():
     print(f"  Test samples: {len(input_test)}")
 
     # 3. Create DataLoaders
-    train_loader, val_loader, test_loader = create_dataloaders(
+    train_loader, val_loader, test_loader, test_dataset = create_dataloaders(
         input_train, target_train, input_val, target_val, input_test, target_test,
         batch_size=BATCH_SIZE, num_workers=NUM_WORKERS
     )

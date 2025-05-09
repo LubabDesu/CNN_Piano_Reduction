@@ -73,6 +73,7 @@ def load_midi_file(filepath,fs=16) :
     - Total duration of the file processed in seconds
     """
     midi_data = pretty_midi.PrettyMIDI(filepath)
+    filename = os.path.basename(filepath).split('/')[-1]
 
     # Get total duration to calculate the hop_size in seconds for each column of the piano roll
     total_duration_in_seconds = midi_data.get_end_time()
@@ -148,20 +149,23 @@ def load_midi_file(filepath,fs=16) :
         print(f"--- Processing TARGET file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
     stacked_rolls = np.stack(piano_rolls, axis=0)
     #print("Sum of ALL elements in the FINAL stacked array:", stacked_rolls.sum()) # Check total non-zero elements
-    return stacked_rolls, total_duration_in_seconds
+    return stacked_rolls, total_duration_in_seconds, filename
 
 
 class PianoReductionDataset(Dataset):
     def __init__(self, input_files, target_files):
         self.inputs = []
         self.inputs_durations = []
+        self.inputs_filename = []
         self.targets = []
         self.targets_durations = []
 
+
         for f in input_files : 
-            piano_roll, duration = load_midi_file(f)
+            piano_roll, duration, filename = load_midi_file(f)
             self.inputs.append(piano_roll) # List of [4, 88, 64]
             self.inputs_durations.append(duration)
+            self.inputs_filename.append(filename)
         
         for file in target_files :
             piano_roll, duration = load_piano_midi_file(file)
@@ -182,8 +186,10 @@ class PianoReductionDataset(Dataset):
 
         input_duration = self.inputs_durations[idx]
         target_duration = self.targets_durations[idx]
+        input_filename = self.inputs_filename[idx]
         return {'input': input_tensor, 
                 'target': target_tensor, 
                 'input_duration' :input_duration, 
-                'target_duration' : target_duration} 
+                'target_duration' : target_duration,
+                'filename' : input_filename} 
 
