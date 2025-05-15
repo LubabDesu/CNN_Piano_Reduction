@@ -18,6 +18,7 @@ def load_piano_midi_file(filepath,fs=16) :
     - Total duration of the file processed in seconds
     """
     midi_data = pretty_midi.PrettyMIDI(filepath)
+    has_notes = False
     # Get total duration to calculate the hop_size in seconds for each column of the piano roll
     total_duration_in_seconds = midi_data.get_end_time()
     piano_notes = []
@@ -26,6 +27,7 @@ def load_piano_midi_file(filepath,fs=16) :
             piano_notes.extend(instrument.notes)
 
     if piano_notes :
+        has_notes = True
         temp_midi = pretty_midi.PrettyMIDI()
         temp_instrument = pretty_midi.Instrument(program = 0)
         temp_instrument.notes = piano_notes
@@ -58,6 +60,8 @@ def load_piano_midi_file(filepath,fs=16) :
         else : 
             resampled_roll = np.zeros((88, 64))
         # Add channel dimension: [1, 88, 64]
+        if (has_notes == False) :
+            print(f"--- Processing INPUT file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
         return np.expand_dims(resampled_roll, axis=0), total_duration_in_seconds
 
 def load_midi_file(filepath,fs=16) :
@@ -146,7 +150,7 @@ def load_midi_file(filepath,fs=16) :
 
     # Stack the four piano rolls to get [4, 88, 64]
     if (has_notes == False) :
-        print(f"--- Processing TARGET file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
+        print(f"--- Processing INPUT file: {filepath} AND IT DOESNT HAVE NOTES!! ---")
     stacked_rolls = np.stack(piano_rolls, axis=0)
     #print("Sum of ALL elements in the FINAL stacked array:", stacked_rolls.sum()) # Check total non-zero elements
     return stacked_rolls, total_duration_in_seconds, filename

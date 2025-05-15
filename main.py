@@ -168,7 +168,7 @@ def main():
     #  - process the data such that i can loop through all the directories and datasets (Handled by find_file_pairs)
     #  - train the model on all the data (split into train and test sets ) (Handled below)
 
-    BASE_DATA_DIR = "CNN_Piano_Reduction/aligned_dataset/aligned" # Base directory containing piece subfolders
+    BASE_DATA_DIR = "aligned_dataset/aligned" # Base directory containing piece subfolders
     VAL_RATIO = 0.15
     TRAIN_RATIO = 0.70 # Implicitly defined by 1 - VAL_RATIO - TEST_RATIO
     TEST_RATIO = 0.15
