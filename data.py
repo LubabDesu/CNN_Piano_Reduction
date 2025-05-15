@@ -90,7 +90,7 @@ def load_midi_file(filepath, fs=16):
     filename = os.path.basename(filepath).split('/')[-1]
 
     total_duration_in_seconds = midi_data.get_end_time()
-    print(f"Total duration: {total_duration_in_seconds} seconds")
+    # print(f"Total duration: {total_duration_in_seconds} seconds")
 
     categories = {
         'brass': ['trumpet', 'horn', 'trombone', 'tuba', 'trb'],
@@ -100,7 +100,7 @@ def load_midi_file(filepath, fs=16):
     }
 
     bpm = midi_data.estimate_tempo() if midi_data.estimate_tempo() else 120
-    print(f"Estimated BPM: {bpm}")
+    # print(f"Estimated BPM: {bpm}")
 
     piano_rolls = []
     overall_has_notes_in_file = False
@@ -108,12 +108,12 @@ def load_midi_file(filepath, fs=16):
     print("\n--- Instrument Details ---")
     if not midi_data.instruments:
         print("No instruments found in this MIDI file.")
-    for i, instrument in enumerate(midi_data.instruments):
-        print(f"  Instrument {i}: Name='{instrument.name}', Program={instrument.program}, Is Drum={instrument.is_drum}, Notes Count={len(instrument.notes)}")
+    # for i, instrument in enumerate(midi_data.instruments):
+    #     print(f"  Instrument {i}: Name='{instrument.name}', Program={instrument.program}, Is Drum={instrument.is_drum}, Notes Count={len(instrument.notes)}")
 
-    print("\n--- Processing Categories ---")
+    # print("\n--- Processing Categories ---")
     for category_name, name_keywords in categories.items():
-        print(f"\nProcessing category: {category_name}")
+        # print(f"\nProcessing category: {category_name}")
         has_notes_in_category = False
         category_notes = []
 
@@ -125,7 +125,7 @@ def load_midi_file(filepath, fs=16):
                 matched_keyword = next((kw for kw in name_keywords if kw in instrument_name_lower), None)
 
             if matched_keyword and not instrument.is_drum:
-                print(f"  Instrument '{instrument.name}' (matched keyword '{matched_keyword}') added to category '{category_name}'. Number of notes: {len(instrument.notes)}")
+                # print(f"  Instrument '{instrument.name}' (matched keyword '{matched_keyword}') added to category '{category_name}'. Number of notes: {len(instrument.notes)}")
                 if instrument.notes:
                     category_notes.extend(instrument.notes)
                     has_notes_in_category = True # Mark that this category has notes
