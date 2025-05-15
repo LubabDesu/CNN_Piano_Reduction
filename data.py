@@ -185,8 +185,8 @@ def load_midi_file(filepath, fs=16):
 
     if not overall_has_notes_in_file:
         print(f"--- Concluding: File: {filepath} DOESN'T APPEAR TO HAVE ANY MATCHED NOTES in any category!! ---")
-    else:
-        print(f"--- Concluding: File: {filepath} HAD NOTES in one or more categories. ---")
+    # else:
+    #     print(f"--- Concluding: File: {filepath} HAD NOTES in one or more categories. ---")
 
     # Ensure piano_rolls has 4 elements before stacking, even if some are empty
     while len(piano_rolls) < len(categories):
